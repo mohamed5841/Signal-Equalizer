@@ -7,7 +7,7 @@ import sounddevice as sd
 import sys
 from PyQt5 import uic
 
-Ui_MainWindow, QtBaseClass = uic.loadUiType("Main_Program_UI.ui")
+Ui_MainWindow, QtBaseClass = uic.loadUiType("equalizer.ui")
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -20,11 +20,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.time_axis = np.linspace(0, len(self.audio_data) / self.sample_rate, len(self.audio_data))
 
         # Initialize plot
-        self.plot = self.Widget_1.plot()
+        self.plot = self.Widget_Signal_Input.plot()
         # self.plot.setData(self.time_axis, self.audio_data)  # Full waveform in the background
 
         # Overlay plot to display progress
-        self.progress_plot = self.Widget_1.plot(pen="r")  # Progress plot in red
+        self.progress_plot = self.Widget_Signal_Input.plot(pen="r")  # Progress plot in red
 
         # Set chunk size and timer interval for smooth playback
         self.chunk_duration = 0.05  # 50 ms per chunk for smoother playback
