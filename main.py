@@ -13,6 +13,7 @@ from Spec_Widget import spec_Widget
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget , QDesktopWidget
 from scipy.fft import fft, ifft, fftfreq
 import pandas as pd
+import copy
 Ui_MainWindow, QtBaseClass = uic.loadUiType("equalizer.ui")
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -24,7 +25,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         height=screen_size.height()
         self.setGeometry(0,0,width , height-100)
         
-
+    
         
         # animal_frequncy_slices={self.VerticalSlider_Channel_10:[4000,20000]
         #      ,self.VerticalSlider_Channel_9:[1000,4000]
@@ -49,10 +50,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     ,self.VerticalSlider_Channel_2:[20,500]}
         
         
-        self.ECG_frequncy_slices={self.VerticalSlider_Channel_8:[7,50]
-                    ,self.VerticalSlider_Channel_6:[0,8]
-                    ,self.VerticalSlider_Channel_4:[0,5]
-                    ,self.VerticalSlider_Channel_2:[0,6.5]}
+        self.ECG_frequncy_slices={self.VerticalSlider_Channel_8:[100,300]
+                    ,self.VerticalSlider_Channel_6:[20,60]
+                    ,self.VerticalSlider_Channel_4:[5,20]
+                    ,self.VerticalSlider_Channel_2:[0,50]}
         
         uniform_frequncy_slices={self.VerticalSlider_Channel_10:[100,100]
              ,self.VerticalSlider_Channel_9:[90,90]
@@ -72,6 +73,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.speed_factor=1
         self.tracking_index=0
+        self.last_ind=0
+        self.num_frames=0
 
         #assigin
         animal_obj=mode("animal_mix.wav",True)
@@ -83,7 +86,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         uniform_obj=mode("mixed2_signal.csv",False)
         uniform_obj.freq_slices=uniform_frequncy_slices
         
-        ecg_obj=mode("Normal_ECG_Original.csv" , False)
+        ecg_obj=mode("Normal_ECG.csv" , False)
         ecg_obj.freq_slices=self.ECG_frequncy_slices
 
         self.mode=uniform_obj 
@@ -93,7 +96,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ComboBox_Mode.setItemData(1, music_obj, Qt.UserRole)
         self.ComboBox_Mode.setItemData(2, animal_obj, Qt.UserRole)
         self.ComboBox_Mode.setItemData(3, ecg_obj, Qt.UserRole)
-        self.Change_mode(0)
+
      
         self.plot_input = self.Widget_Signal_Input.plot(pen="r")
         self.plot_output= self.Widget_Signal_Output.plot(pen="r")
@@ -150,17 +153,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # self.VerticalSlider_Channel_9.valueChanged.connect(lambda:self.apply_attenuation( self.VerticalSlider_Channel_9,9))
         # self.VerticalSlider_Channel_9.setValue(100)
         # self.VerticalSlider_Channel_10.valueChanged.connect(lambda:self.apply_attenuation( self.VerticalSlider_Channel_10,10))
-
-
-
-
-
+        
         self.spectrogram_widget1 = spec_Widget()
         self.spectrogram_widget2 = spec_Widget()
 
         # Set up layouts for spectrogram widgets
         self.setup_widget_layout(self.spectrogram_widget1, self.Widget_Spectrogram_Input)
         self.setup_widget_layout(self.spectrogram_widget2, self.Widget_Spectrogram_Output)
+
+        self.Change_mode(0)
+
+
+
+
+
    
         
     
@@ -214,18 +220,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.mode.timer.stop()
         self.mode = self.ComboBox_Mode.itemData(index, Qt.UserRole)
         self.tracking_index=self.mode.tracking_index
+        self.frequncies=np.fft.fftfreq(len(self.mode.signal.amplitude), 1 / self.mode.signal.sample_rate) 
+        self.fft_result = np.fft.fft( self.mode.signal.amplitude)
+
         self.isplay=self.mode.isplaying
         self.timer=self.mode.timer
         self.mode.timer.timeout.connect(self.update_plot)
+
         self.mode.timer.start()
         self.audio_data = self.mode.audio_data
         self.modified_audio=self.audio_data
+        self.spectrogram_widget1.plot_spectrogram(self.mode.signal.amplitude, self.mode.signal.sample_rate )
+        self.spectrogram_widget2.plot_spectrogram(self.mode.signal.amplitude, self.mode.signal.sample_rate )
        
         self.cumulative_attenuation =  np.ones((10, len(self.audio_data)))
        
         self.audio_data_stretched=self.audio_data
         self.original_audio_data=self.audio_data
-        self.timer.start()
+
         if self.mode.audio:
             self.stream = sd.OutputStream(
             samplerate=self.mode.signal.sample_rate,
@@ -233,10 +245,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             callback=self.audio_callback)
             self.stream.start()
          
-        self.calculate_fft()
+        # self.calculate_fft()
         self.Reset_slider()
         self.setup_sliders()
-        # self.get_top_frequencies(self.mode.signal.amplitude ,self.mode.signal.sample_rate)
+
+        self.timer.start()
         self.plot_frequency_spectrum()
 
     def reset(self):
@@ -306,15 +319,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_plot(self):
         # Plot current chunk of data up to the tracking index for progress display
         tracking_index=int(self.tracking_index*self.speed_factor)
-        if tracking_index < len(self.mode.signal.amplitude):
+        if tracking_index < len(self.mode.signal.amplitude) :
+            
             # Plot progress using a separate line over the waveform
             self.plot_input.setData((self.mode.signal.time[:tracking_index]), self.mode.signal.amplitude[:tracking_index])
             self.plot_output.setData((self.mode.signal.time[:tracking_index]), self.modified_audio[:tracking_index])
+            # self.spectrogram_widget1.plot_spec_parts(self.mode.signal.Spec_input_stft[:tracking_index] , self.mode.signal.sample_rate )
+            
             # print(self.mode.frames)
             # print(len(self.modified_audio[:tracking_index] ) , len(self.mode.signal.amplitude[:tracking_index]))
            
-            self.spectrogram_widget1.plot_spectrogram(self.mode.signal.amplitude[:tracking_index] , self.mode.signal.sample_rate , n_fft=self.mode.frames)
-            self.spectrogram_widget2.plot_spectrogram(self.modified_audio[:tracking_index] , self.mode.signal.sample_rate , n_fft=self.mode.frames)
+            # print(self.mode.signal.Spec_input_stft.shape)
+            
+            # print(self.tracking_index , self.last_ind)
+            # if tracking_index - self.last_ind == self.mode.signal.spec_step:
+            #    self.last_ind=tracking_index
+               
+            # #    print("here")
+            # #    print(len(self.mode.signal.Spec_input_stft[: ,self.num_frames]))
+            #    self.spectrogram_widget1.plot_spec_parts(self.mode.signal.Spec_input_stft[:self.num_frames * self.mode.signal.spec_step] , self.mode.signal.sample_rate )
+            #    self.num_frames+=1
+            # self.spectrogram_widget2.plot_spectrogram(self.modified_audio[:tracking_index] , self.mode.signal.sample_rate , n_fft=self.mode.frames)
            
             if not self.mode.audio and tracking_index < len(self.mode.signal.amplitude):
                 self.tracking_index+=self.mode.frames   
@@ -328,12 +353,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def attenuate_frequency_range(self, freq_start, freq_end, attenuation_factor,index):
         """Apply attenuation to the cumulative attenuation array based on frequency range and factor."""
         # fft_result = np.fft.fft(self.original_audio_data)
-        frequencies = np.fft.fftfreq(len(self.mode.signal.amplitude), 1 / self.mode.signal.sample_rate)
+        frequencies = self.frequncies
         
         # Identify indices within the frequency range and apply the attenuation factor
         indices = np.where((frequencies >= freq_start) & (frequencies <= freq_end))[0]
         self.cumulative_attenuation[index-1][indices] *= attenuation_factor
         self.cumulative_attenuation[index-1][-indices] *= attenuation_factor  # Apply to negative frequencies as well
+        
 
     def apply_attenuation(self,slider_obj,index):
         fft_result=None
@@ -343,10 +369,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         # Apply each slider’s attenuation range
         self.attenuate_frequency_range(self.mode.freq_slices[slider_obj][0], self.mode.freq_slices[slider_obj][1], slider_obj.value() / 100,index)
+        fft_result =copy.copy (self.fft_result)
         # Apply cumulative attenuation to the original audio data
-        fft_result = np.fft.fft(self.mode.signal.amplitude) 
-        # tst=  self.mode.signal.frequncies_magnitude
-        # if np.array_equal(fft_result, tst):
+        # tst= np.fft.fft(self.mode.signal.amplitude)
+        # tst2=np.fft.fft(self.modified_audio)
+        # print(tst2)
+        
+        # if np.array_equal(fft_result, tst2):
         #     print("The arrays are the same.")
         # else:
         #     print("The arrays are different.")
@@ -354,16 +383,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for i in range(10):
             fft_result *= self.cumulative_attenuation[i] 
         self.modified_audio = np.fft.ifft(fft_result).real
-
         self.set_speed()
         self.plot_frequency_spectrum()
+        self.spectrogram_widget2.plot_spectrogram(self.modified_audio, self.mode.signal.sample_rate )
         
 
-    def calculate_fft(self):
-        print("here")
-        freq_mag=np.fft.fft(self.mode.signal.amplitude)
-        freq= np.fft.fftfreq(len(self.mode.signal.amplitude), 1 / self.mode.signal.sample_rate)
-        self.mode.signal.set_freq(freq_mag ,freq)
+    # def calculate_fft(self):
+    #     # print("here")
+    #     freq_mag=np.fft.fft(self.mode.signal.amplitude)
+    #     freq= np.fft.fftfreq(len(self.mode.signal.amplitude), 1 / self.mode.signal.sample_rate)
+    #     self.mode.signal.set_freq(freq_mag ,freq)
 
 
 
@@ -448,7 +477,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.Widget_Frequancy.setXRange(0,120)
             for i in range(1, 11):
                 getattr(self, f"VerticalSlider_Channel_{i}").setValue(100)
-        else:
+        elif index== 1 or index==2:
             for i in range(2 , 10 , 2):
                 getattr(self, f"VerticalSlider_Channel_{i}").setValue(100)
         # music
@@ -458,8 +487,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if index==2:
             self.Widget_Frequancy.setXRange(0,10000)
             # ECG
-        # if index==3:
-        #     self.Widget_Frequancy.setXRange(0,150)
+        if index==3:
+            # for i in range(4 , 10 , 2):
+            #     getattr(self, f"VerticalSlider_Channel_{i}").setValue(0)
+            self.Widget_Frequancy.setXRange(0,400)
+
 
         self.HorizontalSlider_Speed_Input.setValue(10)
 

@@ -10,6 +10,9 @@ class signal:
         self.updated_frequncies_magnitude=None
         self.updated_amplitude=None
         self.fft_magintude=None
+
+        self.Spec_input_stft=None
+        self.spec_step=None
         
     def set_freq(self , frequncies_magnitude , frequncies):
         self.frequncies_magnitude = frequncies_magnitude 
