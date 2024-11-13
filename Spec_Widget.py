@@ -23,29 +23,7 @@ class spec_Widget(QWidget):
         self.canvas.axes = self.canvas.figure.add_subplot(111)
         self.setLayout(vertical_layout)
 
-    def plot_spectrogram(self, spectrogram, sample_rate, x_label='Time', y_label='Frequency' ):
-
-        if spectrogram is not None:
-            # Display the spectrogram with axes and labels
-            librosa.display.specshow(
-                spectrogram,
-                sr=sample_rate,
-                x_axis='time',
-                y_axis='log',
-                ax=self.canvas.axes,
-                cmap='magma'  # Optional: set a color map
-            )
-
-            # Set labels if needed
-            self.canvas.axes.set_xlabel(x_label)
-            self.canvas.axes.set_ylabel(y_label)
-
-            # Adjust padding to allow room for labels and ticks
-            self.canvas.figure.subplots_adjust(left=0.1, right=1, top=0.9, bottom=0.2)
-            self.canvas.draw()
-
-    
-    def cal_stft(self,data, n_fft=2048):
+    def plot_spectrogram(self, data, sample_rate, x_label='Time', y_label='Frequency' ,  n_fft=2048):
         if data is None or len(data) == 0:
             return  # Exit the function if data is empty
         self.canvas.axes.clear()  # Clear previous plot
@@ -57,5 +35,23 @@ class spec_Widget(QWidget):
             )
         except ValueError as e:
             print("hereeee")
-            return None
-        return spectrogram
+            return
+         
+        # Display the spectrogram with axes and labels
+        librosa.display.specshow(
+            spectrogram,
+            sr=sample_rate,
+            x_axis='time',
+            y_axis='log',
+            ax=self.canvas.axes,
+            cmap='magma'  # Optional: set a color map
+        )
+
+        # Set labels if needed
+        self.canvas.axes.set_xlabel(x_label)
+        self.canvas.axes.set_ylabel(y_label)
+
+        # Adjust padding to allow room for labels and ticks
+        self.canvas.figure.subplots_adjust(left=0.1, right=1, top=0.9, bottom=0.2)
+        self.canvas.draw()
+
