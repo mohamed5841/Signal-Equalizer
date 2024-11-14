@@ -36,6 +36,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
              ,self.VerticalSlider_Channel_4:[450, 1100]
              ,self.VerticalSlider_Channel_2:[0, 450]}
         
+        self.hommos_frequcy_slices={self.VerticalSlider_Channel_8:[5000,16000]
+                    ,self.VerticalSlider_Channel_6:[2000,5000]
+                    ,self.VerticalSlider_Channel_4:[200,2000]
+                    ,self.VerticalSlider_Channel_2:[20,200]}
+        
         
         
         # Music_frequncy_slices={self.VerticalSlider_Channel_8:[400, 1000]
@@ -198,13 +203,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     def Load_ECG_Signal(self):
         filename=self.browse_file()
-        ecg_obj=mode(filename , False)
-        ecg_obj.freq_slices=self.ECG_frequncy_slices
-        self.mode=ecg_obj 
+        audio=self.mode.audio
+        freq_slices=self.mode.freq_slices
+        loaded_obj=mode(filename,audio)
+        loaded_obj.freq_slices=freq_slices
+        self.mode=loaded_obj
         self.mode.timer.start()
         self.mode.timer.timeout.connect(self.update_plot)
-        self.ComboBox_Mode.setItemData(3, ecg_obj, Qt.UserRole)
-        self.Change_mode(3)
+        self.ComboBox_Mode.setItemData(self.ComboBox_Mode.currentIndex(), loaded_obj, Qt.UserRole)
+        self.Change_mode(self.ComboBox_Mode.currentIndex())
 
 
         
