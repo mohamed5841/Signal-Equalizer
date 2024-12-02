@@ -4,6 +4,8 @@ from Signal import signal
 import librosa
 import numpy as np
 import sounddevice as sd
+
+
 class mode:
     def __init__(self,path,audio): 
         self.signal=self.signal_creation(path)
@@ -22,19 +24,27 @@ class mode:
 
         if path.endswith('.csv'):
             data = pd.read_csv(path)
-            if 'Time' in data.columns and 'Signal' in data.columns:
-                time = data['Time'].values
-                amplitude = data['Signal'].values
-                sample_rate = time[1]-time[0]
-            else:
-                raise ValueError("CSV file must contain 'Time' and 'Signal' columns.")
+            # if 'Time' in data.columns and 'Signal' in data.columns:
+                # time = data['Time'].values
+                # amplitude = data['Signal'].values
+            time = data.iloc[:, 0].to_numpy()
+            amplitude =data.iloc[:, 1].to_numpy()   
+            sample_rate = 1 / np.mean(np.diff(time))
+            # else:
+            #     raise ValueError("CSV file must contain 'Time' and 'Signal' columns.")
        
         elif path.endswith('.wav'):
             amplitude , sample_rate = librosa.load(path , sr= None)
             time = np.linspace(0 , len(amplitude)/sample_rate ,sample_rate)
+            # amplitude=np.tile(amplitude , 2)
+        # amplitude=np.tile(amplitude , 2)
+        Signal=signal(path,amplitude,sample_rate)
 
-        return signal(path,amplitude,sample_rate)
+        return Signal
     
+
+
+
 
     # def creat_stream(self):
     #     self.stream=sd.OutputStream(
