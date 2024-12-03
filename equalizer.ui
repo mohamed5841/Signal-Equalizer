@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1655</width>
-    <height>968</height>
+    <height>976</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -54,27 +54,7 @@ color: white;
           <property name="bottomMargin">
            <number>8</number>
           </property>
-          <item row="6" column="2">
-           <widget class="QCheckBox" name="checkBox">
-            <property name="font">
-             <font>
-              <pointsize>1</pointsize>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">border:none;
-font-size:15px;
-</string>
-            </property>
-            <property name="text">
-             <string>Show Spectrograms</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="4">
+          <item row="6" column="3">
            <widget class="QComboBox" name="ComboBox_Mode">
             <property name="minimumSize">
              <size>
@@ -124,41 +104,7 @@ border-color:#000080;
             </item>
            </widget>
           </item>
-          <item row="6" column="1">
-           <widget class="QPushButton" name="PushButton_Upload_Signal">
-            <property name="maximumSize">
-             <size>
-              <width>100</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>1</pointsize>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background-color: #000080;
-border-color:#000080;
-color:white;
-border-radius: 12px;
-font-size:15px;</string>
-            </property>
-            <property name="text">
-             <string>Upload</string>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="flat">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="3">
+          <item row="6" column="2">
            <widget class="QComboBox" name="comboBox_Frequancy_Scale">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -201,7 +147,7 @@ border-color:#000080;</string>
             </item>
            </widget>
           </item>
-          <item row="4" column="2">
+          <item row="4" column="1">
            <widget class="QLabel" name="label">
             <property name="font">
              <font>
@@ -221,7 +167,61 @@ font-size:21px;
             </property>
            </widget>
           </item>
-          <item row="4" column="4">
+          <item row="4" column="0">
+           <widget class="QPushButton" name="PushButton_Upload_Signal">
+            <property name="maximumSize">
+             <size>
+              <width>100</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>1</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: #000080;
+border-color:#000080;
+color:white;
+border-radius: 12px;
+font-size:15px;</string>
+            </property>
+            <property name="text">
+             <string>Upload</string>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QCheckBox" name="checkBox">
+            <property name="font">
+             <font>
+              <pointsize>1</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border:none;
+font-size:15px;
+</string>
+            </property>
+            <property name="text">
+             <string>Show Spectrograms</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
            <widget class="QLabel" name="label_2">
             <property name="font">
              <font>
