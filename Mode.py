@@ -17,7 +17,7 @@ class mode:
         self.audio_data=self.signal.amplitude
         self.frames=10
         self.audio=audio
-
+    
 
     def signal_creation(self,path):
         """Load mixed signal data from CSV file."""
@@ -39,7 +39,15 @@ class mode:
             # amplitude=np.tile(amplitude , 2)
         # amplitude=np.tile(amplitude , 2)
         Signal=signal(path,amplitude,sample_rate)
-
+       
+        spectrogram = librosa.amplitude_to_db(
+                np.abs(librosa.stft(Signal.amplitude)),
+                ref=np.max
+            )
+        Signal.Spec_input_stft=spectrogram
+        Signal.spec_step=int(len(Signal.amplitude) / Signal.Spec_input_stft.shape[1])
+        # print(f" step :{Signal.spec_step} , len signal:{len(Signal.amplitude)} , len frames :{(len(Signal.Spec_input_stft))}")
+        # print(f"the shape : {Signal.Spec_input_stft.shape}")
         return Signal
     
 
