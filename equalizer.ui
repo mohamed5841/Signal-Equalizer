@@ -70,7 +70,7 @@ color: white;
             </property>
             <property name="font">
              <font>
-              <pointsize>1</pointsize>
+              <pointsize>-1</pointsize>
              </font>
             </property>
             <property name="styleSheet">
@@ -99,7 +99,7 @@ border-color:#000080;
             </item>
             <item>
              <property name="text">
-              <string>ECG Abnormalities Mode</string>
+              <string>Weiner Mode</string>
              </property>
             </item>
            </widget>
@@ -120,7 +120,7 @@ border-color:#000080;
             </property>
             <property name="font">
              <font>
-              <pointsize>1</pointsize>
+              <pointsize>-1</pointsize>
              </font>
             </property>
             <property name="styleSheet">
@@ -151,7 +151,7 @@ border-color:#000080;</string>
            <widget class="QLabel" name="label">
             <property name="font">
              <font>
-              <pointsize>1</pointsize>
+              <pointsize>-1</pointsize>
              </font>
             </property>
             <property name="styleSheet">
@@ -177,7 +177,7 @@ font-size:21px;
             </property>
             <property name="font">
              <font>
-              <pointsize>1</pointsize>
+              <pointsize>-1</pointsize>
              </font>
             </property>
             <property name="styleSheet">
@@ -205,7 +205,7 @@ font-size:15px;</string>
            <widget class="QCheckBox" name="checkBox">
             <property name="font">
              <font>
-              <pointsize>1</pointsize>
+              <pointsize>-1</pointsize>
              </font>
             </property>
             <property name="styleSheet">
@@ -225,7 +225,7 @@ font-size:15px;
            <widget class="QLabel" name="label_2">
             <property name="font">
              <font>
-              <pointsize>1</pointsize>
+              <pointsize>-1</pointsize>
              </font>
             </property>
             <property name="styleSheet">
@@ -414,7 +414,7 @@ background-color:white;</string>
                </property>
                <property name="font">
                 <font>
-                 <pointsize>1</pointsize>
+                 <pointsize>-1</pointsize>
                 </font>
                </property>
                <property name="styleSheet">
@@ -439,7 +439,7 @@ font-size:15px;</string>
                </property>
                <property name="font">
                 <font>
-                 <pointsize>1</pointsize>
+                 <pointsize>-1</pointsize>
                 </font>
                </property>
                <property name="styleSheet">
@@ -464,7 +464,7 @@ font-size:15px;</string>
                </property>
                <property name="font">
                 <font>
-                 <pointsize>1</pointsize>
+                 <pointsize>-1</pointsize>
                 </font>
                </property>
                <property name="styleSheet">
@@ -489,7 +489,7 @@ font-size:15px;</string>
                </property>
                <property name="font">
                 <font>
-                 <pointsize>1</pointsize>
+                 <pointsize>-1</pointsize>
                 </font>
                </property>
                <property name="styleSheet">
@@ -508,7 +508,7 @@ font-size:15px;</string>
               <widget class="QLabel" name="label_3">
                <property name="font">
                 <font>
-                 <pointsize>1</pointsize>
+                 <pointsize>-1</pointsize>
                 </font>
                </property>
                <property name="styleSheet">

@@ -26,10 +26,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setGeometry(0,0,width , height-100)
         
 
-        animal_frequncy_slices={self.VerticalSlider_Channel_8:[4000, 10000]
-             ,self.VerticalSlider_Channel_6:[1000,4000]
-             ,self.VerticalSlider_Channel_4:[450, 1100]
-             ,self.VerticalSlider_Channel_2:[0, 450]}
+        animal_frequncy_slices={self.VerticalSlider_Channel_8:[2400, 20000]
+             ,self.VerticalSlider_Channel_6:[1800,2400]
+             ,self.VerticalSlider_Channel_4:[500, 1900]
+             ,self.VerticalSlider_Channel_2:[0, 500]}
         
         
 
@@ -37,22 +37,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # instead of Musiccc
         Second_Mode_Slices={
-              self.VerticalSlider_Channel_3:[0, 150]
-             ,self.VerticalSlider_Channel_4:[150,2500]
+              self.VerticalSlider_Channel_3:[0, 64]
+             ,self.VerticalSlider_Channel_4:[50,2000]  # for Drums
              ,self.VerticalSlider_Channel_5:[0 ,3000]
-             ,self.VerticalSlider_Channel_6:[0, 4000]
-             ,self.VerticalSlider_Channel_7:[0, 5000]
-             ,self.VerticalSlider_Channel_8:[5000,10000]
+             ,self.VerticalSlider_Channel_6:[1300, 4200]  # for vilons
+             ,self.VerticalSlider_Channel_7:[3000, 4000]
+             ,self.VerticalSlider_Channel_8:[3500,5000] #for piano
 
        }
+ 
+        self.ECG_frequncy_slices={self.VerticalSlider_Channel_8:[0, 0]
+                    ,self.VerticalSlider_Channel_6:[0, 0]
+                    ,self.VerticalSlider_Channel_4:[0,0] 
+                    ,self.VerticalSlider_Channel_2 :[0,0]}
+        
+        
+        
 
-        self.ECG_frequncy_slices={self.VerticalSlider_Channel_8:[56, 150]
-                    ,self.VerticalSlider_Channel_6:[15, 25]
-                    ,self.VerticalSlider_Channel_4:[0,12] 
-                    ,self.VerticalSlider_Channel_2 :[0,50]}
-        
-        
-        
 
 
         
@@ -65,17 +66,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.num_frames=0
 
         #assigin
-        animal_obj=mode("Data/animal_mix.wav",True)
+        animal_obj=mode("musicAndAnimal_wav_V1.wav",True)
         animal_obj.freq_slices=animal_frequncy_slices
         
-        music_obj=mode("Data/musicFinal.wav",True)
+        music_obj=mode("Data/combined_music3.wav",True)
         music_obj.freq_slices=Second_Mode_Slices
 
         self.uniform_obj=mode("Data/mixed2_signal.csv",False)
         self.uniform_obj.freq_slices=None
         
-        ecg_obj=mode("Data/Normal.csv" , False)
-        ecg_obj.freq_slices=self.ECG_frequncy_slices
+        weiner_obj=mode("Noisy_Signal_1.wav" , True)
+        weiner_obj.freq_slices=self.ECG_frequncy_slices
 
         self.mode=self.uniform_obj 
         self.mode.timer.start()
@@ -83,7 +84,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ComboBox_Mode.setItemData(0, self.uniform_obj, Qt.UserRole)
         self.ComboBox_Mode.setItemData(1, music_obj, Qt.UserRole)
         self.ComboBox_Mode.setItemData(2, animal_obj, Qt.UserRole)
-        self.ComboBox_Mode.setItemData(3, ecg_obj, Qt.UserRole)
+        self.ComboBox_Mode.setItemData(3, weiner_obj, Qt.UserRole)
 
      
         self.plot_input = self.Widget_Signal_Input.plot(pen="r")
@@ -156,7 +157,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # # tstttttt
         # self.tst.clicked.connect(self.SaveFile)
 
-   
+        # the weineerrrr mode 
+        # self.weiner_filters=[""]
         
     
     def setup_widget_layout(self, spec_widget, target_widget):
@@ -198,6 +200,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.Reset_slider()
             self.Change_mode(3)
             self.ECG_Ranges(filename)
+        
+        
         # elif self.ComboBox_Mode.currentIndex() == 0 : 
         #     filename=self.browse_file()
         #     normal_obj=mode(filename , False)
@@ -313,7 +317,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Ensure that the end index is within the bounds of the audio data
         if end_index <= len(self.audio_data_stretched):
             # If the end_index is within bounds, copy data directly
+            # print(self.tracking_index,end_index)
             outdata[:, 0] = self.audio_data_stretched[self.tracking_index:end_index]
+            
+        
         else:
             # If end_index is out of bounds, copy the remaining samples
             if remaining_samples > 0:
@@ -556,6 +563,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.frame_23.show()
             self.frame_25.show()
             self.frame_26.show()
+            self.frame_18.show()
+            self.frame_20.show()
+            self.frame_22.show()
+            self.frame_24.show()
 
             self.label_6.setText("Ch(1)")
             self.label_8.setText("Ch(2)")
@@ -568,36 +579,64 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.label_24.setText("Ch(9)")
             self.label_26.setText("Ch(10)")
 
-        else:
+            # self.Weiner_Button.hide()
+
+        
+        elif self.ComboBox_Mode.currentText() == 'Weiner Mode':
+            # self.Weiner_Button.show()
+            self.frame_17.hide()
+            self.frame_18.hide()
+            self.frame_19.hide()
+            self.frame_20.hide()
+            self.frame_21.hide()
+            self.frame_22.hide()
+            self.frame_23.hide()
+            self.frame_24.hide()
+            self.frame_25.hide()
+            self.frame_26.hide()
+
+        elif self.ComboBox_Mode.currentText() == 'Musical Instruments Mode':
             self.frame_17.hide()
             self.frame_18.hide()
             self.frame_25.hide()
             self.frame_26.hide()
-            # self.frame_19.hide()
-            # self.frame_21.hide()
-            # self.frame_23.hide()
-            # self.frame_25.hide()
-            # self.frame_26.hide()
 
+            self.frame_19.show()
+            self.frame_20.show()
+            self.frame_21.show()
+            self.frame_22.show()
+            self.frame_23.show()
+            self.frame_24.show()
 
-
-            if self.ComboBox_Mode.currentText() == 'Musical Instruments Mode':
-                self.label_8.setText("Bass")
-                self.label_14.setText("Guiter")
-                self.label_18.setText("Violin")
-                self.label_22.setText("Piano")
+            self.label_12.setText("D")
+            self.label_14.setText("Drums")
+            self.label_16.setText("S")
+            self.label_18.setText("Violin")
+            self.label_20.setText("P")
+            self.label_22.setText("Piano")    
+        else :
             
-            elif self.ComboBox_Mode.currentText() == 'Animal Sound Mode':
-                self.label_8.setText("Dog")
-                self.label_14.setText("Wovle")
-                self.label_18.setText("Crow")
-                self.label_22.setText("Bat")
+            self.frame_17.hide()
+            self.frame_19.hide()
+            self.frame_21.hide()
+            self.frame_23.hide()
+            self.frame_25.hide()
+            self.frame_26.hide()
 
-            elif self.ComboBox_Mode.currentText() == 'ECG Abnormalities Mode':
-                self.label_8.setText("Normal")
-                self.label_14.setText("A1")
-                self.label_18.setText("A2")
-                self.label_22.setText("A3")
+            self.frame_18.show()
+            self.frame_20.show()
+            self.frame_22.show()
+            self.frame_24.show()
+
+
+            # self.Weiner_Button.hide()
+
+            self.label_8.setText("Bass")
+            self.label_14.setText("Flute")
+            self.label_18.setText("Bird")
+            self.label_22.setText("Monkey")
+
+
 
 
     def zoom_in(self ) :
