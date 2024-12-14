@@ -26,8 +26,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setGeometry(0,0,width , height-100)
         
 
-        animal_frequncy_slices={self.VerticalSlider_Channel_8:[2400, 20000]
-             ,self.VerticalSlider_Channel_6:[1800,2400]
+        animal_frequncy_slices={self.VerticalSlider_Channel_10:[7600, 20000]
+             ,self.VerticalSlider_Channel_8:[2200, 8800]
+             ,self.VerticalSlider_Channel_6:[1800,2300]
              ,self.VerticalSlider_Channel_4:[500, 1900]
              ,self.VerticalSlider_Channel_2:[0, 500]}
         
@@ -66,7 +67,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.num_frames=0
 
         #assigin
-        animal_obj=mode("musicAndAnimal_wav_V1.wav",True)
+        animal_obj=mode("musicAndAnimal.wav",True)
         animal_obj.freq_slices=animal_frequncy_slices
         
         music_obj=mode("Data/combined_music3.wav",True)
@@ -621,12 +622,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.frame_21.hide()
             self.frame_23.hide()
             self.frame_25.hide()
-            self.frame_26.hide()
+            # self.frame_26.hide()
 
             self.frame_18.show()
             self.frame_20.show()
             self.frame_22.show()
             self.frame_24.show()
+            self.frame_26.show()
 
 
             # self.Weiner_Button.hide()
@@ -635,6 +637,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.label_14.setText("Flute")
             self.label_18.setText("Bird")
             self.label_22.setText("Monkey")
+            self.label_26.setText("Bat")
 
 
 
