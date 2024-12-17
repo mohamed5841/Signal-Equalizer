@@ -49,19 +49,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # instead of Musiccc
         Second_Mode_Slices={
-              self.VerticalSlider_Channel_3:[0, 64]
+              self.VerticalSlider_Channel_3:[200, 2000]
              ,self.VerticalSlider_Channel_4:[50,2000]  # for Drums
              ,self.VerticalSlider_Channel_5:[0 ,3000]
              ,self.VerticalSlider_Channel_6:[1300, 4200]  # for vilons
-             ,self.VerticalSlider_Channel_7:[3000, 4000]
              ,self.VerticalSlider_Channel_8:[3500,5000] #for piano
 
        }
- 
-        self.Weiner_Noise=[["Filtered_Signal_1.wav" , "Noisy_Signal_1.wav"]
-                    ,["Filtered_Signal_2.wav" , "Noisy_Signal_2.wav"]
-                    ,["",""]
-        ]
+
+        self.Weiner_Noise=[["Weiner_Data\\filtered_1.wav" , "Weiner_Data\\song_final_1.wav"],
+                           [ "Weiner_Data\\filtered_2.wav","Weiner_Data\\song_final_2.wav"],
+                           ["Weiner_Data\\filtered_3.wav" ,"Weiner_Data\\song_final_3.wav"]]
 
         self.Weiner_Orginal_Signals_data=[[]
         ,[],[]]
@@ -70,7 +68,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.Rec=None
         
-
+        self.freq_tst={self.VerticalSlider_Channel_3:[200, 2000]
+             ,self.VerticalSlider_Channel_4:[50,2000]  # for Drums
+             ,self.VerticalSlider_Channel_5:[0 ,3000]
+             ,self.VerticalSlider_Channel_6:[1300, 4200]  # for vilons
+             ,self.VerticalSlider_Channel_8:[3500,5000] #for piano
+             }
+        
 
 
         
@@ -86,14 +90,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         animal_obj=mode("musicAndAnimal.wav",True)
         animal_obj.freq_slices=animal_frequncy_slices
         
-        music_obj=mode("Data/combined_music3.wav",True)
+        music_obj=mode("Data/final_music.wav",True)
         music_obj.freq_slices=Second_Mode_Slices
 
         self.uniform_obj=mode("Data/mixed2_signal.csv",False)
         self.uniform_obj.freq_slices=None
         
-        weiner_obj=mode("Noisy_Signal_1.wav" , True)
-        weiner_obj.freq_slices=self.Weiner_Noise
+        weiner_obj=mode("Weiner_Data\\song_final_1.wav" , True)
+        weiner_obj.freq_slices=self.freq_tst
 
         self.mode=self.uniform_obj 
         self.mode.timer.start()
@@ -569,24 +573,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.show_weiner_buttons()
 
+
         elif self.ComboBox_Mode.currentText() == 'Musical Instruments Mode':
             self.frame_17.hide()
             self.frame_18.hide()
             self.frame_25.hide()
             self.frame_26.hide()
+            self.frame_21.hide()
 
             self.frame_19.show()
-            self.frame_20.show()
-            self.frame_21.show()
+            self.frame_20.show()           
             self.frame_22.show()
             self.frame_23.show()
             self.frame_24.show()
 
             self.label_12.setText("D")
             self.label_14.setText("Drums")
-            self.label_16.setText("S")
             self.label_18.setText("Violin")
-            self.label_20.setText("P")
+            self.label_20.setText("O")
             self.label_22.setText("Piano")    
 
 
@@ -649,7 +653,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def play_filterd_signal(self, num):
             signal=self.Weiner_Noise[num][0]
             Weiner_obj=mode(signal , True)
-            Weiner_obj.freq_slices=self.Weiner_Noise
+            Weiner_obj.freq_slices=self.freq_tst
             self.mode=Weiner_obj 
             self.mode.timer.start()
             self.mode.timer.timeout.connect(self.update_plot)
@@ -672,7 +676,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def play_noisy_signal(self,num):
             signal=self.Weiner_Noise[num][1]
             Weiner_obj=mode(signal , True)
-            Weiner_obj.freq_slices=self.Weiner_Noise
+            Weiner_obj.freq_slices=self.freq_tst
             self.mode=Weiner_obj 
             self.mode.timer.start()
             self.mode.timer.timeout.connect(self.update_plot)
@@ -703,14 +707,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
 
     def Calculate_Weiner_orginal_data(self):
-        amplitude , sample_rate = librosa.load("Noisy_Signal_1.wav" , sr= None)
+        amplitude , sample_rate = librosa.load("Weiner_Data\\song_final_1.wav", sr=None)
         self.Weiner_Orginal_Signals_data[0]=[amplitude , sample_rate]
        
-        amplitude , sample_rate = librosa.load("Noisy_Signal_2.wav" , sr= None)
+        amplitude , sample_rate = librosa.load("Weiner_Data\\song_final_2.wav" , sr= None)
         self.Weiner_Orginal_Signals_data[1]=[amplitude , sample_rate]
         
-        # amplitude , sample_rate = librosa.load("" , sr= None)
-        # self.Weiner_Orginal_Signals_data[2]=[amplitude , sample_rate]
+        amplitude , sample_rate = librosa.load("Weiner_Data\\song_final_3.wav" , sr= None)
+        self.Weiner_Orginal_Signals_data[2]=[amplitude , sample_rate]
     
     def Select_Part(self):
         

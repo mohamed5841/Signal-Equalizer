@@ -746,35 +746,6 @@ border-radius:20px;
               <number>11</number>
              </property>
              <item>
-              <widget class="QFrame" name="frame_button_4">
-               <property name="styleSheet">
-                <string notr="true">border:none;</string>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_16">
-                <item>
-                 <widget class="QPushButton" name="PushButton_Select">
-                  <property name="styleSheet">
-                   <string notr="true">background-color: #000080;
-border-color:#000080;
-color:white;
-border-radius: 12px;
-font-size:15px;</string>
-                  </property>
-                  <property name="text">
-                   <string>Select</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
               <widget class="QFrame" name="frame_17">
                <property name="styleSheet">
                 <string notr="true">border:none;</string>
@@ -873,6 +844,31 @@ border:2px solid white;</string>
               </widget>
              </item>
              <item>
+              <widget class="QPushButton" name="PushButton_Select">
+               <property name="maximumSize">
+                <size>
+                 <width>150</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>1</pointsize>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: #000080;
+border-color:#000080;
+color:white;
+border-radius: 12px;
+font-size:15px;</string>
+               </property>
+               <property name="text">
+                <string>Select</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QFrame" name="frame_19">
                <property name="styleSheet">
                 <string notr="true">border:none;</string>
@@ -915,49 +911,6 @@ border:2px solid white;</string>
                   </property>
                   <property name="text">
                    <string>Ch(3)</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QFrame" name="frame_button_1">
-               <property name="styleSheet">
-                <string notr="true">border:none;</string>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_13">
-                <item>
-                 <widget class="QPushButton" name="pushButton_signal_1">
-                  <property name="styleSheet">
-                   <string notr="true">background-color: #000080;
-border-color:#000080;
-color:white;
-border-radius: 12px;
-font-size:15px;</string>
-                  </property>
-                  <property name="text">
-                   <string>Signal_1</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton_After_signal_1">
-                  <property name="styleSheet">
-                   <string notr="true">background-color: #000080;
-border-color:#000080;
-color:white;
-border-radius: 12px;
-font-size:15px;</string>
-                  </property>
-                  <property name="text">
-                   <string>Filtered_1</string>
                   </property>
                  </widget>
                 </item>
@@ -1014,6 +967,71 @@ border:2px solid white;</string>
               </widget>
              </item>
              <item>
+              <widget class="QFrame" name="frame_button_1">
+               <property name="styleSheet">
+                <string notr="true">border:none;</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_18">
+                <item>
+                 <widget class="QPushButton" name="pushButton_signal_1">
+                  <property name="maximumSize">
+                   <size>
+                    <width>150</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>1</pointsize>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">background-color: #000080;
+border-color:#000080;
+color:white;
+border-radius: 12px;
+font-size:15px;</string>
+                  </property>
+                  <property name="text">
+                   <string>Signal_1</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_After_signal_1">
+                  <property name="maximumSize">
+                   <size>
+                    <width>150</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>1</pointsize>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">background-color: #000080;
+border-color:#000080;
+color:white;
+border-radius: 12px;
+font-size:15px;</string>
+                  </property>
+                  <property name="text">
+                   <string>Filtered_1</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
               <widget class="QFrame" name="frame_21">
                <property name="styleSheet">
                 <string notr="true">border:none;</string>
@@ -1056,49 +1074,6 @@ border:2px solid white;</string>
                   </property>
                   <property name="text">
                    <string>Ch(5)</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QFrame" name="frame_button_2">
-               <property name="styleSheet">
-                <string notr="true">border:none;</string>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_14">
-                <item>
-                 <widget class="QPushButton" name="pushButton_signal_2">
-                  <property name="styleSheet">
-                   <string notr="true">background-color: #000080;
-border-color:#000080;
-color:white;
-border-radius: 12px;
-font-size:15px;</string>
-                  </property>
-                  <property name="text">
-                   <string>Signal_2</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton_After_signal_2">
-                  <property name="styleSheet">
-                   <string notr="true">background-color: #000080;
-border-color:#000080;
-color:white;
-border-radius: 12px;
-font-size:15px;</string>
-                  </property>
-                  <property name="text">
-                   <string>Filtered_2</string>
                   </property>
                  </widget>
                 </item>
@@ -1156,6 +1131,71 @@ border:2px solid white;</string>
               </widget>
              </item>
              <item>
+              <widget class="QFrame" name="frame_button_2">
+               <property name="styleSheet">
+                <string notr="true">border:none;</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_19">
+                <item>
+                 <widget class="QPushButton" name="pushButton_signal_2">
+                  <property name="maximumSize">
+                   <size>
+                    <width>150</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>1</pointsize>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">background-color: #000080;
+border-color:#000080;
+color:white;
+border-radius: 12px;
+font-size:15px;</string>
+                  </property>
+                  <property name="text">
+                   <string>Signal_2</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_After_signal_2">
+                  <property name="maximumSize">
+                   <size>
+                    <width>150</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>1</pointsize>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">background-color: #000080;
+border-color:#000080;
+color:white;
+border-radius: 12px;
+font-size:15px;</string>
+                  </property>
+                  <property name="text">
+                   <string>Filtered_2</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
               <widget class="QFrame" name="frame_23">
                <property name="styleSheet">
                 <string notr="true">border:none;</string>
@@ -1205,49 +1245,6 @@ border:2px solid white;</string>
               </widget>
              </item>
              <item>
-              <widget class="QFrame" name="frame_button_3">
-               <property name="styleSheet">
-                <string notr="true">border:none;</string>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_15">
-                <item>
-                 <widget class="QPushButton" name="pushButton_signal_3">
-                  <property name="styleSheet">
-                   <string notr="true">background-color: #000080;
-border-color:#000080;
-color:white;
-border-radius: 12px;
-font-size:15px;</string>
-                  </property>
-                  <property name="text">
-                   <string>Signal_3</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton_After_signal_3">
-                  <property name="styleSheet">
-                   <string notr="true">background-color: #000080;
-border-color:#000080;
-color:white;
-border-radius: 12px;
-font-size:15px;</string>
-                  </property>
-                  <property name="text">
-                   <string>Filtered_3</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
               <widget class="QFrame" name="frame_24">
                <property name="styleSheet">
                 <string notr="true">border:none;</string>
@@ -1290,6 +1287,71 @@ border:2px solid white;</string>
                   </property>
                   <property name="text">
                    <string>Ch(8)</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="frame_button_3">
+               <property name="styleSheet">
+                <string notr="true">border:none;</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_20">
+                <item>
+                 <widget class="QPushButton" name="pushButton_signal_3">
+                  <property name="maximumSize">
+                   <size>
+                    <width>150</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>1</pointsize>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">background-color: #000080;
+border-color:#000080;
+color:white;
+border-radius: 12px;
+font-size:15px;</string>
+                  </property>
+                  <property name="text">
+                   <string>Signal_3</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_After_signal_3">
+                  <property name="maximumSize">
+                   <size>
+                    <width>150</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <pointsize>1</pointsize>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">background-color: #000080;
+border-color:#000080;
+color:white;
+border-radius: 12px;
+font-size:15px;</string>
+                  </property>
+                  <property name="text">
+                   <string>Filtered_3</string>
                   </property>
                  </widget>
                 </item>
