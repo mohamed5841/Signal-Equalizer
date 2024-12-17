@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget , QD
 from scipy.fft import fft, ifft, fftfreq
 import pandas as pd
 import copy
+import pyqtgraph as pg
 Ui_MainWindow, QtBaseClass = uic.loadUiType("equalizer.ui")
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -25,6 +26,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         height=screen_size.height()
         self.setGeometry(0,0,width , height-100)
         
+        self.pushButton_After_signal_1.clicked.connect(lambda : self.play_filterd_signal(0))
+        self.pushButton_signal_1.clicked.connect(lambda : self.play_noisy_signal(0))
+
+        self.pushButton_After_signal_2.clicked.connect(lambda : self.play_filterd_signal(1))
+        self.pushButton_signal_2.clicked.connect(lambda : self.play_noisy_signal(1))
+
+        self.pushButton_After_signal_3.clicked.connect(lambda : self.play_filterd_signal(2))
+        self.pushButton_signal_3.clicked.connect(lambda : self.play_noisy_signal(2))
+
+        self.PushButton_Select.clicked.connect(self.Select_Part)
 
         animal_frequncy_slices={self.VerticalSlider_Channel_10:[7600, 20000]
              ,self.VerticalSlider_Channel_8:[2200, 8800]
@@ -47,12 +58,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
        }
  
-        self.ECG_frequncy_slices={self.VerticalSlider_Channel_8:[0, 0]
-                    ,self.VerticalSlider_Channel_6:[0, 0]
-                    ,self.VerticalSlider_Channel_4:[0,0] 
-                    ,self.VerticalSlider_Channel_2 :[0,0]}
+        self.Weiner_Noise=[["Filtered_Signal_1.wav" , "Noisy_Signal_1.wav"]
+                    ,["Filtered_Signal_2.wav" , "Noisy_Signal_2.wav"]
+                    ,["",""]
+        ]
+
+        self.Weiner_Orginal_Signals_data=[[]
+        ,[],[]]
+
+        self.Calculate_Weiner_orginal_data()
         
-        
+        self.Rec=None
         
 
 
@@ -77,7 +93,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.uniform_obj.freq_slices=None
         
         weiner_obj=mode("Noisy_Signal_1.wav" , True)
-        weiner_obj.freq_slices=self.ECG_frequncy_slices
+        weiner_obj.freq_slices=self.Weiner_Noise
 
         self.mode=self.uniform_obj 
         self.mode.timer.start()
@@ -101,7 +117,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.PushButton_Reset_Input.clicked.connect(lambda:self.reset())
         
         self.PushButton_PlayPause_Input.clicked.connect(lambda:self.play_pause())
-        self.PushButton_Upload_Signal.clicked.connect(lambda: self.Load_ECG_Signal())
+        self.PushButton_Upload_Signal.clicked.connect(lambda: self.Load_Weiner_Signal())
        
         self.HorizontalSlider_Speed_Input.setMinimum(2)
         self.HorizontalSlider_Speed_Input.setMaximum(40)
@@ -112,37 +128,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.PushButton_Zoomout_Input.clicked.connect(lambda : self.zoom_out())
 
 
-        # Connect sliders to apply attenuation
-        #initialize the sliders with the noram values
-        # self.VerticalSlider_Channel_7.setMinimum(5)
-        # self.VerticalSlider_Channel_7.setMaximum(100)
-        # self.VerticalSlider_Channel_7.setSingleStep(10)
-
         for i in range(1, 11):
             getattr(self, f"VerticalSlider_Channel_{i}").valueChanged.connect(lambda _, i=i: self.apply_attenuation(getattr(self, f"VerticalSlider_Channel_{i}"), i))
-        
-        # self.VerticalSlider_Channel_1.valueChanged.connect(lambda:self.apply_attenuation( self.VerticalSlider_Channel_1,1))
-        # self.VerticalSlider_Channel_1.setValue(100)
-        # self.VerticalSlider_Channel_2.valueChanged.connect(lambda:self.apply_attenuation( self.VerticalSlider_Channel_2,2))
-        # self.VerticalSlider_Channel_2.setValue(100)
-        
-        # self.VerticalSlider_Channel_3.valueChanged.connect(lambda:self.apply_attenuation(self.VerticalSlider_Channel_3,3))
-        # self.VerticalSlider_Channel_3.setValue(100)
-        # self.VerticalSlider_Channel_4.valueChanged.connect(lambda:self.apply_attenuation( self.VerticalSlider_Channel_4,4))
-        # self.VerticalSlider_Channel_4.setValue(100)
-        # self.VerticalSlider_Channel_5.valueChanged.connect(lambda:self.apply_attenuation( self.VerticalSlider_Channel_5,5))
-        # self.VerticalSlider_Channel_5.setValue(100)
-        # self.VerticalSlider_Channel_6.valueChanged.connect(lambda:self.apply_attenuation( self.VerticalSlider_Channel_6,6))
-        # self.VerticalSlider_Channel_6.setValue(100)
-        
 
-        # self.VerticalSlider_Channel_7.valueChanged.connect(lambda:self.apply_attenuation(self.VerticalSlider_Channel_7,7))
-        # self.VerticalSlider_Channel_7.setValue(100)
-        # self.VerticalSlider_Channel_8.valueChanged.connect(lambda:self.apply_attenuation( self.VerticalSlider_Channel_8,8))
-        # self.VerticalSlider_Channel_8.setValue(100)
-        # self.VerticalSlider_Channel_9.valueChanged.connect(lambda:self.apply_attenuation( self.VerticalSlider_Channel_9,9))
-        # self.VerticalSlider_Channel_9.setValue(100)
-        # self.VerticalSlider_Channel_10.valueChanged.connect(lambda:self.apply_attenuation( self.VerticalSlider_Channel_10,10))
         
         self.spectrogram_widget1 = spec_Widget()
         self.spectrogram_widget2 = spec_Widget()
@@ -155,11 +143,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
 
-        # # tstttttt
-        # self.tst.clicked.connect(self.SaveFile)
-
-        # the weineerrrr mode 
-        # self.weiner_filters=[""]
         
     
     def setup_widget_layout(self, spec_widget, target_widget):
@@ -188,19 +171,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return None
   
     
-    def Load_ECG_Signal(self):
-        if self.ComboBox_Mode.currentIndex() == 3:
-            # print("ecgg")
-            filename=self.browse_file()
-            ecg_obj=mode(filename , False)
-            ecg_obj.freq_slices=self.ECG_frequncy_slices
-            self.mode=ecg_obj 
-            self.mode.timer.start()
-            self.mode.timer.timeout.connect(self.update_plot)
-            self.ComboBox_Mode.setItemData(3, ecg_obj, Qt.UserRole)
-            self.Reset_slider()
-            self.Change_mode(3)
-            self.ECG_Ranges(filename)
+    def Load_Weiner_Signal(self):
+        pass
+        # if self.ComboBox_Mode.currentIndex() == 3:
+        #     # print("ecgg")
+        #     filename=self.browse_file()
+        #     Weiner_obj=mode(filename , True)
+        #     Weiner_obj.freq_slices=self.Weiner_Noise
+        #     self.mode=Weiner_obj 
+        #     self.mode.timer.start()
+        #     self.mode.timer.timeout.connect(self.update_plot)
+        #     self.ComboBox_Mode.setItemData(3, Weiner_obj, Qt.UserRole)
+        #     self.Change_mode(3)
+            
         
         
         # elif self.ComboBox_Mode.currentIndex() == 0 : 
@@ -216,7 +199,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
 
-        
+
 
 
 
@@ -228,6 +211,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.stream.stop()
         self.mode.timer.stop()
         self.mode = self.ComboBox_Mode.itemData(index, Qt.UserRole)
+
         self.tracking_index=self.mode.tracking_index
         self.frequncies=np.fft.fftfreq(len(self.mode.signal.amplitude), 1 / self.mode.signal.sample_rate) 
         self.fft_result = np.fft.fft( self.mode.signal.amplitude)
@@ -239,6 +223,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.mode.timer.start()
         self.audio_data = self.mode.audio_data
         self.modified_audio=self.audio_data
+        
         self.spectrogram_widget1.plot_spectrogram(self.mode.signal.amplitude, self.mode.signal.sample_rate )
         self.spectrogram_widget2.plot_spectrogram(self.mode.signal.amplitude, self.mode.signal.sample_rate )
        
@@ -253,7 +238,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             channels=1,
             callback=self.audio_callback)
             self.stream.start()
-         
+
         # self.calculate_fft()
         self.Reset_slider()
         self.setup_sliders()
@@ -341,28 +326,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_plot(self):
         # Plot current chunk of data up to the tracking index for progress display
         tracking_index=int(self.tracking_index*self.speed_factor)
+        # print(f" the firsttt is the modified  : {self.mode.signal.amplitude.shape}")
+        # print(f"the second plot : {self.modified_audio.shape}")
         if tracking_index < len(self.mode.signal.amplitude) :
             
             # Plot progress using a separate line over the waveform
             self.plot_input.setData((self.mode.signal.time[:tracking_index]), self.mode.signal.amplitude[:tracking_index])
             self.plot_output.setData((self.mode.signal.time[:tracking_index]), self.modified_audio[:tracking_index])
-            # self.spectrogram_widget1.plot_spec_parts(self.mode.signal.Spec_input_stft[:tracking_index] , self.mode.signal.sample_rate )
-            
-            # print(self.mode.frames)
-            # print(len(self.modified_audio[:tracking_index] ) , len(self.mode.signal.amplitude[:tracking_index]))
-           
-            # print(self.mode.signal.Spec_input_stft.shape)
-            
-            # print(self.tracking_index , self.last_ind)
-            # if tracking_index - self.last_ind == self.mode.signal.spec_step:
-            #    self.last_ind=tracking_index
-               
-            # #    print("here")
-            # #    print(len(self.mode.signal.Spec_input_stft[: ,self.num_frames]))
-            #    self.spectrogram_widget1.plot_spec_parts(self.mode.signal.Spec_input_stft[:self.num_frames * self.mode.signal.spec_step] , self.mode.signal.sample_rate )
-            #    self.num_frames+=1
-            # self.spectrogram_widget2.plot_spectrogram(self.modified_audio[:tracking_index] , self.mode.signal.sample_rate , n_fft=self.mode.frames)
-           
             if not self.mode.audio and tracking_index < len(self.mode.signal.amplitude):
                 self.tracking_index+=self.mode.frames   
                 # self.speed_factor=1
@@ -548,7 +518,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if index==3:
             # for i in range(4 , 10 , 2):
             #     getattr(self, f"VerticalSlider_Channel_{i}").setValue(0)
-            self.Widget_Frequancy.setXRange(0,250)
+            self.Widget_Frequancy.setXRange(0,1000)
 
 
         self.HorizontalSlider_Speed_Input.setValue(10)
@@ -580,7 +550,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.label_24.setText("Ch(9)")
             self.label_26.setText("Ch(10)")
 
-            # self.Weiner_Button.hide()
+            
+            self.remove_weiner_buttons()
 
         
         elif self.ComboBox_Mode.currentText() == 'Weiner Mode':
@@ -595,6 +566,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.frame_24.hide()
             self.frame_25.hide()
             self.frame_26.hide()
+
+            self.show_weiner_buttons()
 
         elif self.ComboBox_Mode.currentText() == 'Musical Instruments Mode':
             self.frame_17.hide()
@@ -615,6 +588,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.label_18.setText("Violin")
             self.label_20.setText("P")
             self.label_22.setText("Piano")    
+
+
+            self.remove_weiner_buttons()
         else :
             
             self.frame_17.hide()
@@ -639,7 +615,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.label_22.setText("Monkey")
             self.label_26.setText("Bat")
 
+            self.remove_weiner_buttons()
 
+
+    def remove_weiner_buttons(self):
+        self.frame_button_1.hide()
+        self.frame_button_2.hide()
+        self.frame_button_3.hide()
+        self.PushButton_Select.hide()
+
+
+
+    def show_weiner_buttons(self):
+        self.frame_button_1.show()
+        self.frame_button_2.show()
+        self.frame_button_3.show()
+        self.PushButton_Select.show()
 
 
     def zoom_in(self ) :
@@ -655,45 +646,83 @@ class MainWindow(QMainWindow, Ui_MainWindow):
            viewboxI.scaleBy((1/0.8, 1/0.8))
            viewboxO.scaleBy((1/0.8, 1/0.8))
 
-    
-    def ECG_Ranges(self , filename):
-        print(filename)
-        if filename.endswith("A1(1-12).csv"):
-               self.VerticalSlider_Channel_4.setMinimum(40)
-            #    for i in(6,8):
-            #         getattr(self, f"VerticalSlider_Channel_{i}").setValue(0)
-            #         getattr(self, f"VerticalSlider_Channel_{i}").setMinimum(0)
-       
-        elif filename.endswith("A2(15-25).csv"):
-               self.VerticalSlider_Channel_6.setMinimum(40)
-            #    for i in (4,8):
-            #         getattr(self, f"VerticalSlider_Channel_{i}").setValue(0)
-            #         getattr(self, f"VerticalSlider_Channel_{i}").setMinimum(0)
- 
+    def play_filterd_signal(self, num):
+            signal=self.Weiner_Noise[num][0]
+            Weiner_obj=mode(signal , True)
+            Weiner_obj.freq_slices=self.Weiner_Noise
+            self.mode=Weiner_obj 
+            self.mode.timer.start()
+            self.mode.timer.timeout.connect(self.update_plot)
+            self.ComboBox_Mode.setItemData(3, Weiner_obj, Qt.UserRole)
+            self.Change_mode(3)
+            # print(f"shape of signal after creation :{self.modified_audio.shape}")
+            # print(f"shape outputt {self.audio_data.shape}")
+            amplitude,SR=self.Weiner_Orginal_Signals_data[num][0] ,self.Weiner_Orginal_Signals_data[num][1] 
+            # print(f"shape the input shoulddd {amplitude.shape}")
+
+            self.mode.signal.amplitude=amplitude
+            # print(f"after corretionmn : {self.mode.signal.amplitude.shape}")
+            self.spectrogram_widget1.plot_spectrogram(amplitude, SR )
+            if self.Rec is not None :self.Widget_Signal_Input.removeItem(self.Rec)  
 
 
+        # self.spectrogram_widget2.plot_spectrogram(self.mode.signal.amplitude, self.mode.signal.sample_rate )
 
 
-    # def SaveFile(self):
-    #     # print("heree in save file ")
-    #     # if self.Current_Signal:
-    #         # Prepare data for saving
-    #         data = {
-    #             "time": self.mode.signal.time,
-    #             "amplitude": self.modified_audio,
-                
-    #         }
-    #         df = pd.DataFrame(data)
+    def play_noisy_signal(self,num):
+            signal=self.Weiner_Noise[num][1]
+            Weiner_obj=mode(signal , True)
+            Weiner_obj.freq_slices=self.Weiner_Noise
+            self.mode=Weiner_obj 
+            self.mode.timer.start()
+            self.mode.timer.timeout.connect(self.update_plot)
+            self.ComboBox_Mode.setItemData(3, Weiner_obj, Qt.UserRole)
+            self.Change_mode(3)
+
             
-    #         # Set the filename based on signal name
-    #         filename = f"A1.csv"
-    #         try:
-    #             # Save to CSV
-    #             df.to_csv(filename, index=False)
-    #             print(f"File saved as {filename}")
-    #         except Exception as e:
-    #             print(f"Error saving file: {e}") 
+    def iterative_wiener_filter(self, noisy_signal, noise_signal, fs, n_fft=1024, overlap=None, iterations=3, spectral_floor=0.1):
+        if overlap is None:
+            overlap = n_fft // 2
 
+        if overlap >= n_fft:
+            raise ValueError('noverlap must be less than nperseg.')
+
+        f, t, noisy_stft = stft(noisy_signal, fs, nperseg=n_fft, noverlap=overlap)
+        _, _, noise_stft = stft(noise_signal, fs, nperseg=n_fft, noverlap=overlap)
+
+        noise_psd = np.mean(np.abs(noise_stft) ** 2, axis=-1, keepdims=True)
+        filtered_stft = noisy_stft
+
+        for _ in range(iterations):
+            noisy_psd = np.abs(filtered_stft) ** 2
+            wiener_filter = np.maximum(noisy_psd / (noisy_psd + noise_psd), spectral_floor)
+            filtered_stft = wiener_filter * noisy_stft
+
+        _, denoised_signal = istft(filtered_stft, fs, nperseg=n_fft, noverlap=overlap)
+        return denoised_signal.ravel()
+    
+
+    def Calculate_Weiner_orginal_data(self):
+        amplitude , sample_rate = librosa.load("Noisy_Signal_1.wav" , sr= None)
+        self.Weiner_Orginal_Signals_data[0]=[amplitude , sample_rate]
+       
+        amplitude , sample_rate = librosa.load("Noisy_Signal_2.wav" , sr= None)
+        self.Weiner_Orginal_Signals_data[1]=[amplitude , sample_rate]
+        
+        # amplitude , sample_rate = librosa.load("" , sr= None)
+        # self.Weiner_Orginal_Signals_data[2]=[amplitude , sample_rate]
+    
+    def Select_Part(self):
+        
+        self.Rec=pg.RectROI([17 , -1] , [3,2] ,pen='blue', movable=True, resizable=True )       
+        self.Widget_Signal_Input.addItem(self.Rec)  
+
+
+   
+  
+
+
+    
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
