@@ -49,11 +49,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # instead of Musiccc
         Second_Mode_Slices={
-              self.VerticalSlider_Channel_3:[200, 2000]
-             ,self.VerticalSlider_Channel_4:[50,2000]  # for Drums
-             ,self.VerticalSlider_Channel_7:[1000,3400]
-             ,self.VerticalSlider_Channel_6:[1300, 4200]  # for vilons
-             ,self.VerticalSlider_Channel_8:[3500,5000] #for piano
+              self.VerticalSlider_Channel_3:[2300, 3500] #for E
+             ,self.VerticalSlider_Channel_4:[1500,4000]  # for Drums
+             ,self.VerticalSlider_Channel_6:[150, 2000]  # for I
+             ,self.VerticalSlider_Channel_7:[1500, 3000]   #for O
+             ,self.VerticalSlider_Channel_8:[50,2000] #for piano
 
        }
 
@@ -90,7 +90,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         animal_obj=mode("musicAndAnimal.wav",True)
         animal_obj.freq_slices=animal_frequncy_slices
         
-        music_obj=mode("Data/final_music.wav",True)
+        music_obj=mode("Data/Music_Mode.wav",True)
         music_obj.freq_slices=Second_Mode_Slices
 
         self.uniform_obj=mode("Data/mixed2_signal.csv",False)
@@ -592,9 +592,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.frame_23.show()
             self.frame_24.show()
 
-            self.label_12.setText("D")
+            self.label_12.setText("E")
             self.label_14.setText("Drums")
-            self.label_18.setText("Violin")
+            self.label_18.setText("I")
             self.label_20.setText("O")
             self.label_22.setText("Piano")    
 
