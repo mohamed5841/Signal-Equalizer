@@ -51,7 +51,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Second_Mode_Slices={
               self.VerticalSlider_Channel_3:[200, 2000]
              ,self.VerticalSlider_Channel_4:[50,2000]  # for Drums
-             ,self.VerticalSlider_Channel_5:[0 ,3000]
+             ,self.VerticalSlider_Channel_7:[1000,3400]
              ,self.VerticalSlider_Channel_6:[1300, 4200]  # for vilons
              ,self.VerticalSlider_Channel_8:[3500,5000] #for piano
 
@@ -227,9 +227,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.mode.timer.start()
         self.audio_data = self.mode.audio_data
         self.modified_audio=self.audio_data
-        
-        self.spectrogram_widget1.plot_spectrogram(self.mode.signal.amplitude, self.mode.signal.sample_rate )
-        self.spectrogram_widget2.plot_spectrogram(self.mode.signal.amplitude, self.mode.signal.sample_rate )
+        if  self.checkBox.isChecked():
+            self.spectrogram_widget1.plot_spectrogram(self.mode.signal.amplitude, self.mode.signal.sample_rate )
+            self.spectrogram_widget2.plot_spectrogram(self.mode.signal.amplitude, self.mode.signal.sample_rate )
        
         self.cumulative_attenuation =  np.ones((10, len(self.audio_data)))
        
@@ -299,30 +299,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def audio_callback(self, outdata, frames, time, status):
         """Callback function to send audio in chunks to the OutputStream."""
         # print(frames)
+        
         self.mode.frames=frames
 
         end_index = self.tracking_index + (frames)
         remaining_samples = len(self.audio_data_stretched) - self.tracking_index
-
-        # Ensure that the end index is within the bounds of the audio data
-        if end_index <= len(self.audio_data_stretched):
-            # If the end_index is within bounds, copy data directly
-            # print(self.tracking_index,end_index)
-            outdata[:, 0] = self.audio_data_stretched[self.tracking_index:end_index]
+        try :
+            # Ensure that the end index is within the bounds of the audio data
+            if end_index <= len(self.audio_data_stretched):
+                # If the end_index is within bounds, copy data directly
+                # print(self.tracking_index,end_index)
+                outdata[:, 0] = self.audio_data_stretched[self.tracking_index:end_index]
+                
             
-        
-        else:
-            # If end_index is out of bounds, copy the remaining samples
-            if remaining_samples > 0:
-                outdata[:remaining_samples, 0] = self.audio_data_stretched[self.tracking_index:]
+            else:
+                # If end_index is out of bounds, copy the remaining samples
+                if remaining_samples > 0:
+                    outdata[:remaining_samples, 0] = self.audio_data_stretched[self.tracking_index:]
 
-            if remaining_samples < frames:
-                outdata[remaining_samples:, 0] = 0
+                if remaining_samples < frames:
+                    outdata[remaining_samples:, 0] = 0
 
 
-        self.tracking_index = end_index
-        if self.tracking_index >= len(self.audio_data_stretched):
-            self.stream.stop()  # Stop playback when done
+            self.tracking_index = end_index
+            if self.tracking_index >= len(self.audio_data_stretched):
+                self.stream.stop()  # Stop playback when done
+
+        except:
+            print("dcvmcndv")
 
 
 
@@ -385,7 +389,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.modified_audio = np.fft.ifft(fft_result).real
         self.set_speed()
         self.plot_frequency_spectrum()
-        self.spectrogram_widget2.plot_spectrogram(self.modified_audio, self.mode.signal.sample_rate )
+        if  self.checkBox.isChecked():
+            self.spectrogram_widget2.plot_spectrogram(self.modified_audio, self.mode.signal.sample_rate )
         
 
     # def calculate_fft(self):
@@ -674,6 +679,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
     def play_noisy_signal(self,num):
+            if self.Rec is not None :self.Widget_Signal_Input.removeItem(self.Rec)
             signal=self.Weiner_Noise[num][1]
             Weiner_obj=mode(signal , True)
             Weiner_obj.freq_slices=self.freq_tst
@@ -682,6 +688,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.mode.timer.timeout.connect(self.update_plot)
             self.ComboBox_Mode.setItemData(3, Weiner_obj, Qt.UserRole)
             self.Change_mode(3)
+            
 
             
     def iterative_wiener_filter(self, noisy_signal, noise_signal, fs, n_fft=1024, overlap=None, iterations=3, spectral_floor=0.1):
@@ -718,7 +725,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     def Select_Part(self):
         
-        self.Rec=pg.RectROI([17 , -1] , [3,2] ,pen='blue', movable=True, resizable=True )       
+        self.Rec=pg.RectROI([8, -0.5] , [3,0.5] ,pen='blue', movable=True, resizable=True )       
         self.Widget_Signal_Input.addItem(self.Rec)  
 
 
