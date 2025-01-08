@@ -8,7 +8,7 @@
 - [Team](#team)
 
 ## Introduction
-![image](https://github.com/user-attachments/assets/0c4e084d-5105-4665-b941-43af7326b0f0)
+![image](Uniform.png)
 
 Signal Equalizer is a desktop application that equalizes signals in different modes, including uniform range, Music and Vowels, Music and Animal, and Weiner. This application is built using PyQt for the user interface, providing a seamless and interactive experience for users.
 
