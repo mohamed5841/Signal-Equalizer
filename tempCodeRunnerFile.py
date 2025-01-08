@@ -1,1 +1,1 @@
-plot_spectrogram
+Weiner

@@ -43,8 +43,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
              ,self.VerticalSlider_Channel_4:[500, 1900]
              ,self.VerticalSlider_Channel_2:[0, 500]}
         
-        
-
 
 
         # instead of Musiccc
@@ -57,9 +55,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
        }
 
-        self.Weiner_Noise=[["Weiner_Data\\filtered_1.wav" , "Weiner_Data\\song_final_1.wav"],
-                           [ "Weiner_Data\\filtered_2.wav","Weiner_Data\\song_final_2.wav"],
-                           ["Weiner_Data\\filtered_3.wav" ,"Weiner_Data\\song_final_3.wav"]]
+        self.Weiner_Noise=[["Data\\Weiner_Data\\filtered_1.wav" , "Data\\Weiner_Data\\song_final_1.wav"],
+                           [ "Data\\Weiner_Data\\filtered_2.wav","Data\\Weiner_Data\\song_final_2.wav"],
+                           ["Data\\Weiner_Data\\filtered_3.wav" ,"Data\\Weiner_Data\\song_final_3.wav"]]
 
         self.Weiner_Orginal_Signals_data=[[]
         ,[],[]]
@@ -75,28 +73,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
              ,self.VerticalSlider_Channel_8:[3500,5000] #for piano
              }
         
-
-
-        
-
-        
-        
+  
         self.speed_factor=1
         self.tracking_index=0
         self.last_ind=0
         self.num_frames=0
 
         #assigin
-        animal_obj=mode("musicAndAnimal.wav",True)
+        animal_obj=mode("Data/musicAndAnimal.wav",True)
         animal_obj.freq_slices=animal_frequncy_slices
         
         music_obj=mode("Data/Music_Mode.wav",True)
         music_obj.freq_slices=Second_Mode_Slices
 
-        self.uniform_obj=mode("Data/mixed2_signal.csv",False)
+        self.uniform_obj=mode("Data/UniformSignal.csv",False)
         self.uniform_obj.freq_slices=None
         
-        weiner_obj=mode("Weiner_Data\\song_final_1.wav" , True)
+        weiner_obj=mode("Data/Weiner_Data/song_final_1.wav" , True)
         weiner_obj.freq_slices=self.freq_tst
 
         self.mode=self.uniform_obj 
@@ -177,35 +170,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     def Load_Weiner_Signal(self):
         pass
-        # if self.ComboBox_Mode.currentIndex() == 3:
-        #     # print("ecgg")
-        #     filename=self.browse_file()
-        #     Weiner_obj=mode(filename , True)
-        #     Weiner_obj.freq_slices=self.Weiner_Noise
-        #     self.mode=Weiner_obj 
-        #     self.mode.timer.start()
-        #     self.mode.timer.timeout.connect(self.update_plot)
-        #     self.ComboBox_Mode.setItemData(3, Weiner_obj, Qt.UserRole)
-        #     self.Change_mode(3)
-            
-        
-        
-        # elif self.ComboBox_Mode.currentIndex() == 0 : 
-        #     filename=self.browse_file()
-        #     normal_obj=mode(filename , False)
-        #     # normal_obj.freq_slices=self.get_range_frequencies()
-        #     # print(normal_obj.freq_slices)
-        #     self.mode=normal_obj 
-        #     self.mode.timer.start()
-        #     self.mode.timer.timeout.connect(self.update_plot)
-        #     self.ComboBox_Mode.setItemData(3, normal_obj, Qt.UserRole)
-        #     self.Change_mode(0)
-
-
-
-
-
-
 
 
     def Change_mode(self , index):
@@ -372,18 +336,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.attenuate_frequency_range(self.mode.freq_slices[slider_obj][0], self.mode.freq_slices[slider_obj][1], slider_obj.value() / 100,index)
         fft_result =copy.copy (self.fft_result)
         
-        # print(f" slider{self.VerticalSlider_Channel_4.value()}  , {self.VerticalSlider_Channel_6.value()}")
-        
-        # Apply cumulative attenuation to the original audio data
-        # tst= np.fft.fft(self.mode.signal.amplitude)
-        # tst2=np.fft.fft(self.modified_audio)
-        # print(tst2)
-        
-        # if np.array_equal(fft_result, tst2):
-        #     print("The arrays are the same.")
-        # else:
-        #     print("The arrays are different.")
-        
         for i in range(10):
             fft_result *= self.cumulative_attenuation[i] 
         self.modified_audio = np.fft.ifft(fft_result).real
@@ -391,14 +343,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.plot_frequency_spectrum()
         if  self.checkBox.isChecked():
             self.spectrogram_widget2.plot_spectrogram(self.modified_audio, self.mode.signal.sample_rate )
-        
-
-    # def calculate_fft(self):
-    #     # print("here")
-    #     freq_mag=np.fft.fft(self.mode.signal.amplitude)
-    #     freq= np.fft.fftfreq(len(self.mode.signal.amplitude), 1 / self.mode.signal.sample_rate)
-    #     self.mode.signal.set_freq(freq_mag ,freq)
-
+    
 
 
     def get_range_frequencies(self):
@@ -447,21 +392,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             return freq_bands
 
-
-
-
-    
-
-
-
-        # Update the audio playback and plot
-        # Update audio data for playback
-        # self.Widget_Signal_Input.clear()
-        # self.plot1.setData(self.mode.signal.time, self.modified_audio, pen="b")
-        # self.play_audio(self.modified_audio)
-         
-        # Update the frequency plot
-        # self.plot_frequency_spectrum(self.modified_audio)
 
     def plot_frequency_spectrum(self):
         index=self.comboBox_Frequancy_Scale.currentIndex()
@@ -714,13 +644,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
 
     def Calculate_Weiner_orginal_data(self):
-        amplitude , sample_rate = librosa.load("Weiner_Data\\song_final_1.wav", sr=None)
+        amplitude , sample_rate = librosa.load("Data/Weiner_Data/song_final_1.wav", sr=None)
         self.Weiner_Orginal_Signals_data[0]=[amplitude , sample_rate]
        
-        amplitude , sample_rate = librosa.load("Weiner_Data\\song_final_2.wav" , sr= None)
+        amplitude , sample_rate = librosa.load("Data/Weiner_Data/song_final_2.wav" , sr= None)
         self.Weiner_Orginal_Signals_data[1]=[amplitude , sample_rate]
         
-        amplitude , sample_rate = librosa.load("Weiner_Data\\song_final_3.wav" , sr= None)
+        amplitude , sample_rate = librosa.load("Data/Weiner_Data/song_final_3.wav" , sr= None)
         self.Weiner_Orginal_Signals_data[2]=[amplitude , sample_rate]
     
     def Select_Part(self):
@@ -729,11 +659,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.Widget_Signal_Input.addItem(self.Rec)  
 
 
-   
-  
-
-
-    
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
