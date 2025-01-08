@@ -72,13 +72,13 @@ To set up the Signal Equalizer desktop application, follow these steps:
 ## Team
 This project was developed as part of the Biomedical Signal Processing class task by the following team members:
 
-| Team Members       | 
+| Contributors        | 
 |---------------------|
-| Mohamed Abdelhamid | 
-| Mohamed Salah      | 
-| Shaimaa Kamel      | 
-| Bassant Rabie      |
-| Malak Emad         | 
+| [Mohamed Abdelhamid](https://github.com/mohamed5841) |
+| [Mohamed Salah](https://github.com/MuhamedSalah10) |
+| [Shaimaa Kamel](https://github.com/Shaimaakamel474) |
+| [Bassant Rabie](https://github.com/bassantrabie) |
+| [Malak Emad](https://github.com/malak-emad) |
 
 ## Submitted To
 
